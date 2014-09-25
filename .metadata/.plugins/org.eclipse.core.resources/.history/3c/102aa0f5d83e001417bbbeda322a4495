@@ -1,0 +1,19 @@
+package test;
+
+import tictactoe.TicTacToeBoard;
+import tictactoe.TicTacToeBoardImpl_Porter;
+
+public class TicTacToeTest {
+	
+	public static void main(String[] args) {
+		TicTacToeBoard board = new TicTacToeBoardImpl_Porter();
+		board.setMark(0, 0);
+		board.setMark(0, 0);
+	}
+	
+	public int position(int row, int column) {
+        assert row < ROW_COUNT && row >= 0 && column < COLUMN_COUNT && column >= 0;
+        return column * COLUMN_COUNT + row;
+    }
+
+}

@@ -1,0 +1,104 @@
+package test;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import tictactoe.Mark;
+import tictactoe.TicTacToeBoard;
+import tictactoe.TicTacToeBoardImpl_Porter;
+
+public class TicTacToeBoardTest {
+	
+	private TicTacToeBoard board;
+
+	@Before
+	public void setUp() {
+		board = new TicTacToeBoardImpl_Porter();
+	}
+	
+	@Test
+	public void emptyBoardTest() {
+		for(int row = 0; row < TicTacToeBoard.ROW_COUNT; row++) {
+			for(int column = 0; column < TicTacToeBoard.COLUMN_COUNT; column++) {
+				assert(board.getMark(row, column) == null);
+			}
+		}
+		assert !board.isGameOver();
+	}
+
+	@Test
+	public void fullBoardTest() {
+		board.setMark(0, 0);
+		board.setMark(0, 1);
+		board.setMark(0, 2);
+		board.setMark(1, 1);
+		board.setMark(1, 0);
+		board.setMark(1, 2);
+		board.setMark(2, 1);
+		board.setMark(2, 0);
+		board.setMark(2, 2);
+	}
+	
+	@Test
+	public void checkHorizontalWin() {
+		board.setMark(0, 0);
+		board.setMark(1, 1);
+		board.setMark(0, 2);
+		board.setMark(1, 0);
+		board.setMark(0, 1);
+		assert board.getWinner() == Mark.X;
+		
+		setUp();
+		board.setMark(1, 0);
+		board.setMark(0, 0);
+		board.setMark(2, 0);
+		board.setMark(0, 1);
+		board.setMark(1, 1);
+		board.setMark(0, 2);
+		assert board.getWinner() == Mark.O;
+		
+	}
+	
+	@Test
+	public void checkVerticalWin() {
+		board.setMark(1, 1);
+		board.setMark(0, 2);
+		board.setMark(1, 2);
+		board.setMark(2, 2);
+		board.setMark(1, 0);
+		assert board.getWinner() == Mark.X;		
+	}
+	
+	@Test
+	public void checkDescendingDiagonalWin() {
+		board.setMark(0, 1);
+		board.setMark(0, 0);
+		board.setMark(1, 0);
+		board.setMark(1, 1);
+		board.setMark(0, 2);
+		board.setMark(2, 1);
+		board.setMark(2, 0);
+		board.setMark(2, 2);
+		System.out.println(board.getWinner());
+		assert board.getWinner() == Mark.O;
+	}
+	
+	@Test
+	public void checkAscendingDiagonalWin() {
+		board.setMark(1, 0);
+		board.setMark(0, 0);
+		board.setMark(0, 1);
+		board.setMark(1, 1);
+		board.setMark(0, 1);
+		board.setMark(1, 2);
+		board.setMark(2, 1);
+		board.setMark(2, 2);
+	}
+	
+	@Test
+	public void checkInvalidWin() {
+		assert true;
+		
+	}
+
+}

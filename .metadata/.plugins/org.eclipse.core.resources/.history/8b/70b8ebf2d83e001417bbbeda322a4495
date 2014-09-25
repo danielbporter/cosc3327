@@ -1,0 +1,14 @@
+package test;
+
+import tictactoe.TicTacToeBoard;
+import tictactoe.TicTacToeBoardImpl_Porter;
+
+public class TicTacToeTest {
+	
+	public static void main(String[] args) {
+		TicTacToeBoard board = new TicTacToeBoardImpl_Porter();
+		board.setMark(0, 0);
+		board.setMark(0, 0);
+	}
+
+}
