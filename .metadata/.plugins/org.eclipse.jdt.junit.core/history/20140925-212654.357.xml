@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testrun name="TicTacToeBoardTest (1)" project="COSC3327_Challenge04" tests="14" started="14" failures="0" errors="0" ignored="0">
+  <testsuite name="test.TicTacToeBoardTest" time="0.001">
+    <testcase name="fullBoardTest" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="invalidGetMarkNegativeColumn" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="checkAscendingDiagonalWin" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="invalidSetMarkGameOver" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="invalidGetWinner" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="emptyBoardTest" classname="test.TicTacToeBoardTest" time="0.001"/>
+    <testcase name="checkHorizontalWin" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="invalidSetMarkTakenSpace" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="checkVerticalWin" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="invalidGetMarkHighColumn" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="invalidGetMarkHighRow" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="invalidSetMarkBadRC" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="invalidGetMarkNegativeRow" classname="test.TicTacToeBoardTest" time="0.0"/>
+    <testcase name="checkDescendingDiagonalWin" classname="test.TicTacToeBoardTest" time="0.0"/>
+  </testsuite>
+</testrun>

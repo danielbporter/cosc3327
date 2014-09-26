@@ -45,12 +45,13 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      * @return the mark at (row,column), or null if that location is unplayed
      */
     public Mark getMark(int row, int column) {
-        int position = gridtoMovesIndex(row, column);
+        int position = gridtoArrayIndex(row, column);
+        Mark mark = null;
         for(int i = 0; i < movesArray.length; i++) {
             if(movesArray[i] == position)
-                return i%2 == 0 ? Mark.X : Mark.O;
+                mark = i%2 == 0 ? Mark.X : Mark.O;
         }
-        return null;
+        return mark;
     }
 
     /**
@@ -64,14 +65,16 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      * @param column
      */
     public void setMark(int row, int column) {
-        int position = gridtoMovesIndex(row, column);
+        int position = gridtoArrayIndex(row, column);
         assert !isGameOver();
-        for(int i = 0; i < movesArray.length; i++) {
+        int i = 0;
+        while(i < movesArray.length) {
         	assert movesArray[i] != position;
-            if(movesArray[i] == NO_MOVE) {
-                movesArray[i] = position;
-                return;
-            }
+        	if(movesArray[i] == NO_MOVE) {
+        		movesArray[i] = position;
+        		break;
+        	}
+        	i++;
         }
     }
 
@@ -81,11 +84,16 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      * @return the mark of the current player, or null if the game has ended
      */
     public Mark getTurn() {
-        for(int i = 0; i < movesArray.length; i++) {
-            if(movesArray[i] == NO_MOVE && !isGameOver())
-                return i%2 == 0 ? Mark.X : Mark.O;
+    	Mark turn = null;        
+        int i = 0;
+        while(i < movesArray.length) {
+        	if(movesArray[i] == NO_MOVE && !isGameOver()) {
+                turn = i%2 == 0 ? Mark.X : Mark.O;
+                break;
+        	}
+        	i++;
         }
-        return null;
+        return turn;
     }
 
     /**
@@ -97,11 +105,9 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      * @return true if game is over, else false
      */
     public boolean isGameOver() {
-        // if all moves have been played then the game is over
-        if(movesArray[movesArray.length-1] != NO_MOVE)
-            return true;
-        //check if there is a win
-        return isWinner() != null;
+        // the game is over if all moves have been played (late win or tie)
+    	// or if there is a winner
+        return movesArray[movesArray.length-1] != NO_MOVE || isWinner() != null;
     }
 
     /**
@@ -123,9 +129,10 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      * @param column
      * @return the movesArray index of the given board location
      */
-    protected int gridtoMovesIndex(int row, int column) {
-        assert row < ROW_COUNT && row >= 0 && column < COLUMN_COUNT && column >= 0;
-        return row * 3 + column;
+    protected int gridtoArrayIndex(int row, int column) {
+        assert row < ROW_COUNT && row >= 0 &&
+        		column < COLUMN_COUNT && column >= 0;
+        return row * ROW_COUNT + column;
     }
 
     /**
@@ -138,27 +145,18 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      */
     private Mark isWinner() {
     	// find the index of the last played move and check if there is a winner
+    	Mark winner = null;
         for(int i = 0; i < movesArray.length; i++) {
-        	// if game is not yet over
-            if(movesArray[i] == NO_MOVE)
-                return null;
-            if(i == movesArray.length-1 || movesArray[i+1] == -1) {
+        	// if this move is the last played move
+            if(movesArray[i] != NO_MOVE && movesArray[i+1] == NO_MOVE) {
             	int row = movesArray[i] / ROW_COUNT;
                 int column = movesArray[i] % COLUMN_COUNT;
-                // check for horizontal win
-                if(checkHorizontalWin(row))
-                    return i%2 == 0 ? Mark.X : Mark.O;
-                // check for vertical win
-                if(checkVerticalWin(column))
-                    return i%2 == 0 ? Mark.X : Mark.O;
-                // check for diagonal wins
-                if(checkDescendingDiagonalWin())
-                    return i%2 == 0 ? Mark.X : Mark.O;
-                if(checkAscendingDiagonalWin())
-                    return i%2 == 0 ? Mark.X : Mark.O;
+                if(checkHorizontalWin(row) || checkVerticalWin(column) ||
+                   checkDescendingDiagonalWin() || checkAscendingDiagonalWin())
+                	winner = i%2 == 0 ? Mark.X : Mark.O;
             } 
         }
-        return null;
+        return winner;
     }
 
     /**
@@ -169,9 +167,9 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      */
     private boolean checkHorizontalWin(int row) {
         // win along the row
-        if((getMark(row, 0) == getMark(row, 1)) && (getMark(row, 1) == getMark(row, 2)) && getMark(row, 0) != null)
-            return true;
-        return false;
+        return getMark(row, 0) == getMark(row, 1) &&
+        		(getMark(row, 1) == getMark(row, 2)) &&
+        		getMark(row, 0) != null;
     }
 
     /**
@@ -182,9 +180,9 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      */
     private boolean checkVerticalWin(int column) {
         // win along a single column
-        if(getMark(0, column) == getMark(1, column) && getMark(1, column) == getMark(2, column) && getMark(0, column) != null)
-            return true;
-        return false;
+        return getMark(0, column) == getMark(1, column) &&
+        		getMark(1, column) == getMark(2, column) &&
+        		getMark(0, column) != null;
     }
 
     /**
@@ -197,9 +195,9 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      * @return true if there is a win on the descending diagonal, else false
      */
     private boolean checkDescendingDiagonalWin() {
-        if((getMark(0, 0) == getMark(1, 1)) && (getMark(1, 1) == getMark(2, 2)) && getMark(1, 1) != null)
-        	return true;
-        return false;
+        return (getMark(0, 0) == getMark(1, 1)) &&
+        		(getMark(1, 1) == getMark(2, 2)) &&
+        		getMark(1, 1) != null;
     }
     
     /**
@@ -212,9 +210,9 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      * @return true if there is a win on the ascending diagonal, else false
      */
     private boolean checkAscendingDiagonalWin() {
-    	if((getMark(0, 2) == getMark(1, 1)) && (getMark(1, 1) == getMark(2, 0)) && getMark(1, 1) != null)
-        	return true;
-        return false;
+    	return (getMark(0, 2) == getMark(1, 1)) &&
+    			(getMark(1, 1) == getMark(2, 0)) &&
+    			getMark(1, 1) != null;
     }
     
     /**

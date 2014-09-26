@@ -1,0 +1,268 @@
+package tictactoe;
+/**
+ * An implementation of the TicTacToeBoard interface.
+ * 
+ * This implementation manages the game state of a tic-tac-toe game. This
+ * assignment is for Dr. Kart's COSC 3327 Data Structures and Algorithms class,
+ * Challenge03.
+ * 
+ * @author Daniel Porter
+ */
+public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
+
+	// symbolic int to represent there has not been a mark played in a location
+    protected static final int NO_MOVE = -1;
+    // symbolic int to represent no match between two things
+    protected static final int NO_MATCH = -1;
+
+    /*
+     * the tic-tac-toe board encoded as an int array
+     * the board locations correspond to the follow indices
+     * 0|1|2
+     * 3|4|5
+     * 6|7|8
+     */
+    protected int[] movesArray;
+
+    /**
+     * Creates an empty board of the dimensions listed in the interface.
+     */
+    public TicTacToeBoardImpl_Porter() {
+        movesArray = new int[ROW_COUNT * COLUMN_COUNT];
+        for(int i = 0; i < movesArray.length; i++) {
+            movesArray[i] = NO_MOVE;
+        }
+    }
+
+    /**
+     * Returns the mark at the specified location on the board.
+     * 
+     * Row and column must be valid board coordinates according to the
+     * TicTacToeBoard interface. 
+     * 
+     * @param row
+     * @param column
+     * @return the mark at (row,column), or null if that location is unplayed
+     */
+    public Mark getMark(int row, int column) {
+        int position = gridtoArrayIndex(row, column);
+        Mark mark = null;
+        for(int i = 0; i < movesArray.length; i++) {
+            if(movesArray[i] == position)
+                mark = i%2 == 0 ? Mark.X : Mark.O;
+        }
+        return mark;
+    }
+
+    /**
+     * Plays a mark at (row, column).
+     * 
+     * (row, column) cannot already be played, nor can the game already have
+     * ended, either in a win or a tie. Row and column must be valid board
+     * coordinates according to the interface.
+     * 
+     * @param row
+     * @param column
+     */
+    public void setMark(int row, int column) {
+        int position = gridtoArrayIndex(row, column);
+        assert !isGameOver();
+        
+        int i = 0;
+        while(i < movesArray.length) {
+        	assert movesArray[i] != position;
+        	if(movesArray[i] == NO_MOVE) {
+        		movesArray[i] = position;
+        		break;
+        	}
+        	i++;
+        }
+        
+        
+        
+        
+        for(int i = 0; i < movesArray.length; i++) {
+        	assert movesArray[i] != position;
+            if(movesArray[i] == NO_MOVE) {
+                movesArray[i] = position;
+                break;
+            }
+        }
+    }
+
+    /**
+     * Returns whether it is X or Os turn.
+     * 
+     * @return the mark of the current player, or null if the game has ended
+     */
+    public Mark getTurn() {
+        for(int i = 0; i < movesArray.length; i++) {
+            if(movesArray[i] == NO_MOVE && !isGameOver())
+                return i%2 == 0 ? Mark.X : Mark.O;
+        }
+        return null;
+    }
+
+    /**
+     * Indicates whether or not the game has ended.
+     * 
+     * A game is over if a player has won by putting three marks in a line,
+     * or if there are no remaining moves.
+     * 
+     * @return true if game is over, else false
+     */
+    public boolean isGameOver() {
+        // if all moves have been played then the game is over
+        if(movesArray[movesArray.length-1] != NO_MOVE)
+            return true;
+        //check if there is a win
+        return isWinner() != null;
+    }
+
+    /**
+     * Gets the winner of the game, if any.
+     * 
+     * This method cannot be called if the game has not yet ended.
+     * 
+     * @return the Mark of the winning player, or null if draw
+     */
+    public Mark getWinner() {
+        assert isGameOver();
+        return isWinner();
+    }
+
+    /**
+     * Converts a (row,column) pair to the corresponding array indices.
+     * 
+     * @param row
+     * @param column
+     * @return the movesArray index of the given board location
+     */
+    protected int gridtoArrayIndex(int row, int column) {
+        assert row < ROW_COUNT && row >= 0 && column < COLUMN_COUNT && column >= 0;
+        return row * 3 + column;
+    }
+
+    /**
+     * Decides if either player has won the game.
+     * 
+     * Unlike getWinner(), this method does not require the game to be over.
+     * This method also does not check for a tie.
+     * 
+     * @return the Mark of the winner, otherwise null (tie or game not over)
+     */
+    private Mark isWinner() {
+    	// find the index of the last played move and check if there is a winner
+        for(int i = 0; i < movesArray.length; i++) {
+        	// if game is not yet over
+            if(movesArray[i] == NO_MOVE)
+                return null;
+            if(i == movesArray.length-1 || movesArray[i+1] == -1) {
+            	int row = movesArray[i] / ROW_COUNT;
+                int column = movesArray[i] % COLUMN_COUNT;
+                // check for horizontal win
+                if(checkHorizontalWin(row))
+                    return i%2 == 0 ? Mark.X : Mark.O;
+                // check for vertical win
+                if(checkVerticalWin(column))
+                    return i%2 == 0 ? Mark.X : Mark.O;
+                // check for diagonal wins
+                if(checkDescendingDiagonalWin())
+                    return i%2 == 0 ? Mark.X : Mark.O;
+                if(checkAscendingDiagonalWin())
+                    return i%2 == 0 ? Mark.X : Mark.O;
+            } 
+        }
+        return null;
+    }
+
+    /**
+     * Checks for a win on a specific row.
+     * 
+     * @param row
+     * @return true if there is a win on the given row, else false
+     */
+    private boolean checkHorizontalWin(int row) {
+        // win along the row
+        if((getMark(row, 0) == getMark(row, 1)) && (getMark(row, 1) == getMark(row, 2)) && getMark(row, 0) != null)
+            return true;
+        return false;
+    }
+
+    /**
+     * Checks for a win on a specific column.
+     * 
+     * @param column
+     * @return true if there is a win on the given column, else false
+     */
+    private boolean checkVerticalWin(int column) {
+        // win along a single column
+        if(getMark(0, column) == getMark(1, column) && getMark(1, column) == getMark(2, column) && getMark(0, column) != null)
+            return true;
+        return false;
+    }
+
+    /**
+     * Checks for a win on the descending diagonal.
+     * 
+     * The descending diagonal is:
+     * X| | 
+     *  |X| 
+     *  | |X
+     * @return true if there is a win on the descending diagonal, else false
+     */
+    private boolean checkDescendingDiagonalWin() {
+        if((getMark(0, 0) == getMark(1, 1)) && (getMark(1, 1) == getMark(2, 2)) && getMark(1, 1) != null)
+        	return true;
+        return false;
+    }
+    
+    /**
+     * Checks for a win on the ascending diagonal.
+     * 
+     * The ascending diagonal is:
+     *  | |X 
+     *  |X| 
+     * X| |
+     * @return true if there is a win on the ascending diagonal, else false
+     */
+    private boolean checkAscendingDiagonalWin() {
+    	if((getMark(0, 2) == getMark(1, 1)) && (getMark(1, 1) == getMark(2, 0)) && getMark(1, 1) != null)
+        	return true;
+        return false;
+    }
+    
+    /**
+     * Returns the board as a string.
+     * 
+     * Output looks like this:
+     * X| |
+     * -----
+     *  |O| 
+     * -----
+     *  | |X
+     *  
+     * @return the board as a string
+     */
+    public String toString() {
+        String output = "";
+        for(int r = 0; r < ROW_COUNT; r++) {
+            for(int c = 0; c < COLUMN_COUNT; c++) {
+                Mark cell = getMark(r,c);
+                if(cell != null)
+                    output += cell;
+                else
+                    output += ' ';
+
+                if(c+1 != COLUMN_COUNT)
+                    output += '|';
+                else
+                    output += "\n";
+            }
+            if(r+1 != ROW_COUNT)
+                output += "-----\n";
+        }
+        return output;
+    }
+
+}
