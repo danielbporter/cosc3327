@@ -146,7 +146,7 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
     private Mark isWinner() {
     	// find the index of the last played move and check if there is a winner
     	Mark winner = null;
-        for(int i = 0; i < movesArray.length && winner == null; i++) {
+        for(int i = 0; i < movesArray.length; i++) {
         	// if this move is the last played move
             if(movesArray[i] != NO_MOVE && movesArray[i+1] == NO_MOVE) {
             	int row = movesArray[i] / ROW_COUNT;

@@ -123,11 +123,11 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
     }
 
     /**
-     * Converts a (row,column) pair to the corresponding array index.
+     * Converts a (row,column) pair to the corresponding array indices.
      * 
      * @param row
      * @param column
-     * @return the a single integer representing a board coordinate
+     * @return the movesArray index of the given board location
      */
     protected int gridPositiontoArrayValue(int row, int column) {
         assert row < ROW_COUNT && row >= 0 &&
@@ -146,7 +146,7 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
     private Mark isWinner() {
     	// find the index of the last played move and check if there is a winner
     	Mark winner = null;
-        for(int i = 0; i < movesArray.length && winner == null; i++) {
+        for(int i = 0; i < movesArray.length; i++) {
         	// if this move is the last played move
             if(movesArray[i] != NO_MOVE && movesArray[i+1] == NO_MOVE) {
             	int row = movesArray[i] / ROW_COUNT;

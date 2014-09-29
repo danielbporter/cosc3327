@@ -45,7 +45,7 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      * @return the mark at (row,column), or null if that location is unplayed
      */
     public Mark getMark(int row, int column) {
-        int position = gridPositiontoArrayValue(row, column);
+        int position = gridtoArrayIndex(row, column);
         Mark mark = null;
         for(int i = 0; i < movesArray.length; i++) {
             if(movesArray[i] == position)
@@ -65,7 +65,7 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
      * @param column
      */
     public void setMark(int row, int column) {
-        int position = gridPositiontoArrayValue(row, column);
+        int position = gridtoArrayIndex(row, column);
         assert !isGameOver();
         int i = 0;
         while(i < movesArray.length) {
@@ -123,13 +123,13 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
     }
 
     /**
-     * Converts a (row,column) pair to the corresponding array index.
+     * Converts a (row,column) pair to the corresponding array indices.
      * 
      * @param row
      * @param column
-     * @return the a single integer representing a board coordinate
+     * @return the movesArray index of the given board location
      */
-    protected int gridPositiontoArrayValue(int row, int column) {
+    protected int gridtoArrayIndex(int row, int column) {
         assert row < ROW_COUNT && row >= 0 &&
         		column < COLUMN_COUNT && column >= 0;
         return row * ROW_COUNT + column;
@@ -146,7 +146,7 @@ public class TicTacToeBoardImpl_Porter implements TicTacToeBoard {
     private Mark isWinner() {
     	// find the index of the last played move and check if there is a winner
     	Mark winner = null;
-        for(int i = 0; i < movesArray.length && winner == null; i++) {
+        for(int i = 0; i < movesArray.length; i++) {
         	// if this move is the last played move
             if(movesArray[i] != NO_MOVE && movesArray[i+1] == NO_MOVE) {
             	int row = movesArray[i] / ROW_COUNT;
